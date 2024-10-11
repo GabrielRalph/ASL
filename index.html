@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+    <script type = module src = "./app.js"></script>
+</head>
+<body>
+    <sign-app></sign-app>
+
+</body>
+<style>
+    sign-app {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        --charge: 0;
+    }
+
+    sign-app > *{
+        display: none;
+        position: relative;
+        justify-content: center;
+    }
+
+    sign-app:not([state]) .welcome-message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    sign-app .centered {
+        background: rgba(255, 253, 251, 1);
+        padding: 2em;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 1em;
+        border-radius: 1em;
+    }
+
+    sign-app button {
+        border: none;
+        outline: none;
+        background-color: rgb(255, 132, 0);
+        color: white;
+        padding: 0.5em;
+        border-radius: 0.5em;
+        cursor: pointer;
+    }
+    sign-app[state = "error"] .error-message {
+        display: flex;
+    }
+
+    sign-app[state = "loading"] .loading-message {
+        display: flex;
+    }
+
+
+    sign-app[state = "started"] .main-display {
+        display: flex;
+    }
+
+
+    sign-app video {
+        max-height: 100vh;
+
+    }
+
+    sign-app .letter {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 1em;
+        background-color: #fffa;
+        border-radius: 5em;
+        margin: 0.5em;
+    }
+    sign-app .charge {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 2em;
+        height: calc(var(--charge) * 80%);
+        background-color: rgb(141, 221, 91);
+        outline: 2px solid white;
+        border-radius: 5em;
+        margin: 0.5em;
+    }
+    sign-app .text {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        padding: 0.5em;
+        font-size: 2em;
+        transform: translateX(-50%);
+        background-color: #fffa;
+        outline: 2px solid rgb(141, 221, 91);
+        border-radius: 5em;
+        margin: 0.5em;
+    }
+    body {
+        background: #2e2c2c;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+
+    }
+
+</style>
+</html>
