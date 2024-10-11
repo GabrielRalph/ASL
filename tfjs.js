@@ -2,7 +2,7 @@
 import {addProcessListener} from "./webcam.js" 
 
 let model = undefined;
-model = await tf.loadLayersModel("/tfjs-asl-model/model.json");
+model = await tf.loadLayersModel("./tfjs-asl-model/model.json");
 const keys = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','del','space'];
 
 function getFeatures(X) {

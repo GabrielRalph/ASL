@@ -1,4 +1,4 @@
-import { SvgPlus } from "./SvgPlus/4.js";
+import { SvgPlus } from "https://www.svg.plus/4.js";
 import { addProcessListener, getStream, startWebcam } from "./webcam.js";
 import { startProcessing } from "./webcam.js";
 import {} from "./landmarker.js"
