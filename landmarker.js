@@ -7,8 +7,15 @@ import {
   
   
   let handLandmarker = undefined;
-  let runningMode = "VIDEO";
+  let runningMode = "video";
   
+  function isWebGL2Supported() {
+    const canvas = document.createElement('canvas');
+    return !!(window.WebGL2RenderingContext && canvas.getContext('webgl2'));
+  }
+
+  const webgl2 = isWebGL2Supported();
+
   // Before we can use HandLandmarker class we must wait for it to finish
   // loading. Machine Learning models can be large and take a moment to
   // get everything needed to run.
@@ -19,20 +26,22 @@ import {
     handLandmarker = await HandLandmarker.createFromOptions(vision, {
       baseOptions: {
         modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-        delegate: "GPU"
+        delegate: !webgl2 ? "CPU" : "GPU"
       },
       runningMode: runningMode,
       numHands: 2
     });
   };
+  console.log(`mode = ${ !webgl2 ? "CPU" : "GPU"}`);
   createHandLandmarker();
   
 
-Webcam.setProcess(({video}) => {
+Webcam.setProcess(async ({video}) => {
   let results = null;
   if (handLandmarker) {
     let startTimeMs = performance.now();
-    results = handLandmarker.detectForVideo(video, startTimeMs);
+    results = await handLandmarker.detectForVideo(video, startTimeMs);
+    results.timeStamp = startTimeMs;
   }
   return results;
 })

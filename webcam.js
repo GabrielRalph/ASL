@@ -22,8 +22,12 @@ const camParams2 = {
   let Ctx = Canvas.getContext("2d", {willReadFrequently: true});
   let Video = document.createElement("video");
   Video.style.setProperty("opacity", "0");
-  Video.style.setProperty("width", "0");
-  Video.style.setProperty("height", "0");
+  Video.style.setProperty("width", "640");
+  Video.style.setProperty("height", "480");
+  Video.style.setProperty("position", "absolute");
+  Video.style.setProperty("z-index", "-100");
+  Video.style.setProperty("pointer-events", "none");
+  // Video.style.setProperty("z-index", "-100");
 
   document.body.prepend(Video);
   let Stream = null;
@@ -34,8 +38,9 @@ const camParams2 = {
   let capturing = false;
   let processListeners = [];
   
-  Video.setAttribute("autoplay", "true");
-  Video.setAttribute("playsinline", "true");
+  Video.toggleAttribute("autoplay", true);
+  Video.toggleAttribute("playsinline", true);
+  Video.toggleAttribute("muted", true);
   Video.muted = true;
   Video.onunmute = () => {
     console.log('xx');

@@ -5,6 +5,21 @@ import {} from "./landmarker.js"
 import {} from "./tfjs.js"
 
 
+class WelcomeMessage extends SvgPlus {
+    constructor(){
+        super("span")
+        this.loadContent()
+    }
+
+    async loadContent(){
+        let res = await fetch("./welcome.html");
+        let text = await res.text();
+        this.innerHTML = text;
+    }
+
+}
+
+
 class SignApp extends SvgPlus {
     constructor(el){
         super(el);
@@ -12,11 +27,12 @@ class SignApp extends SvgPlus {
         this.lastCurrentBest = null;
         this.chargeRate = 0.02;
         this.dischargeRate = 0.01;
+        this.deleteCount = 0;
     }
     onconnect(){
         let welcome = this.createChild("div", {class: "welcome-message"})
         let center = welcome.createChild("div", {class: "centered"});
-        let msg = center.createChild("div", {content: "Welcom to the ASL detection APP"})
+        let msg = center.createChild(WelcomeMessage)
         let btn = center.createChild("button", {content: "Get Started", events: {
             click: () => {
                 this.startWebcam();
@@ -73,8 +89,19 @@ class SignApp extends SvgPlus {
         // If the current best letter charge has exceeded 1 then add the letter
         // to the current text string, and reset the letter charge's.
         if (letterCharge[currentBest] > 1) {
+            if (currentBest == "del") {
+                this.deleteCount += 1;
+            } else {
+                this.deleteCount = 0;
+            }
             switch (currentBest) {
-                case "del": this.text = this.text.slice(0, this.text.length-1); break;
+                case "del": 
+                    if (this.deleteCount == 2) {
+                        this.text = "";
+                    } else {
+                        this.text = this.text.slice(0, this.text.length-1); 
+                    }
+                    break;
                 case "space": this.text += "&nbsp;"; break;
                 default: this.text += currentBest;
             }

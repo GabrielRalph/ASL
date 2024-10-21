@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src = "./data-creator.js" type = "module"></script>
+    <title>DataCreator</title>
+</head>
+<body>
+    <data-creator></data-creator>
+</body>
+
+<style>
+    data-creator {
+        --tool-color: rgba(16, 36, 83, 0.69);
+    }
+    data-creator > *{
+        display: none;
+        position: relative;
+        justify-content: center;
+    }
+
+    data-creator:not([state]) .welcome-message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    data-creator[state = "error"] .error-message {
+            display: flex;
+    }
+
+    data-creator[state = "loading"] .loading-message {
+        display: flex;
+    }
+
+
+    data-creator[state = "started"] .main-display {
+        display: flex;
+    }
+
+    video {
+        width: 100%;
+    }
+
+    .rel-box {
+        display: flex;
+        position: relative;
+    }
+    [recording] .rel-box{
+        outline: 2px solid red;
+    }
+
+    .playback-img {
+        pointer-events: none;
+        opacity: 0;
+        transition: 0.3s ease-in-out;
+    }
+    [playback] .playback-img {
+        opacity: 1;
+    }
+
+    .feedback, .playback-img{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .centered {
+        background: rgba(255, 253, 251, 1);
+        padding: 2em;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 1em;
+        border-radius: 1em;
+    }
+
+    .tool-bar, .playback-tool-bar, .promt-window {
+        background: var(--tool-color);
+        border-radius: 0.5em;
+        margin: 0.5em;
+        padding: 0.6em;
+        display: flex;
+        gap: 0.6em;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+    }
+
+    data-creator:not([promt-for-save]) .promt-window{
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .promt-window {
+        top: 50%;
+        left: 50%;
+        bottom: inherit;
+        transform: translate(-50%, -50%);
+        transition: 0.3s ease-in-out opacity;
+    }
+    .promt-window > * {
+        height: 2em;
+    }
+    .promt-window input {
+        background: var(--tool-color);
+        outline: none;
+        border-radius: 0.3em;
+        padding: 0.15em  0.8em;
+        border: 2px solid white;
+        color: white;
+    }
+    .promt-window:not([valid]) *[name = "save"] {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    
+    .playback-tool-bar {
+        opacity: 0;
+        pointer-events: none;;
+    }
+    [playback] .playback-tool-bar {
+        opacity: 1;
+        pointer-events: all;
+    }
+    [playback] .tool-bar {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+
+    .playback-tool-bar > * {
+        height: 2em;
+    }
+    .tool-bar > * {
+        width: 2em;
+        height: 2em;
+        cursor: pointer;
+    }
+
+    .timer {
+        font-size: 2em;
+        text-align: center;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 2em;
+        width: 2em;
+        height: 2em;
+        border-radius: 2em;
+        background: rgba(42, 38, 38, 0.403);
+        color: white;
+        pointer-events: none;
+        opacity: 0;
+        transition: 0.3s ease-in-out;
+    }
+    [countdown] .timer {
+        opacity: 1;
+    }
+    
+    .tool-bar > *[name = "play"] { display: none; }
+    [has-recording] .tool-bar > *[name = "play"] {
+        display: inherit;
+        
+    }
+
+    button {
+        border: none;
+        outline: none;
+        background-color: rgb(255, 132, 0);
+        color: white;
+        padding: 0.5em;
+        border-radius: 0.5em;
+        cursor: pointer;
+    }
+
+    svg.feedback circle {
+        fill: #ff8400;
+    }
+    svg.feedback path {
+        stroke: rgb(14, 179, 255);  
+    }
+
+    .tool-bar svg, .playback-tool-bar svg, .promt-window svg {
+        fill: rgb(222, 216, 216);
+    }
+
+  
+    .record-c {
+        transition: 0.3s ease-in-out rx ry;
+    }
+    [countdown] .record-c {
+        fill: rgb(232, 19, 19);
+    }
+    [recording] .record-c {
+        fill: rgb(232, 19, 19);
+    }
+    circle.record {
+        stroke: rgb(222, 216, 216);
+        fill: none;
+        stroke-width: 0.85;
+    }
+
+    .bar-slider .bar {
+        fill: #ff8400;
+        stroke: white;
+        stroke-width: 0.5;
+    }
+
+    .bar-slider .fill-bar {
+        stroke: white;
+        stroke-width: 0.5;
+        fill: #f8dabb;
+    }
+
+    .bar-slider .outline {
+        stroke: white;
+        stroke-width: 0.5;
+        fill: none;
+    }
+    .my-icon {
+        display: flex;
+        cursor: pointer;
+    }
+    .my-icon svg {
+        padding: 0.2em 0;
+        height: calc(100% - 0.4em);
+    }
+
+</style>
+</html>
