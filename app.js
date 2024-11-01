@@ -127,7 +127,7 @@ class SignApp extends SvgPlus {
             this.setAttribute("state", "started")
             let stream = getStream();
             this.video.srcObject = stream;
-            startProcessing()
+            // startProcessing()
        } else {
             this.setAttribute("state", "error")
        }
