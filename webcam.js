@@ -150,7 +150,6 @@ const camParams2 = {
         throw 'no stream'
       }
       Stream = stream;
-      Stream2 = stream2;
       console.log("here");
       return new Promise((resolve, reject) => {
         let onload = () => {
