@@ -164,7 +164,7 @@ const camParams2 = {
         resolve(true)
       });
     } catch (e) {
-      console.log(e);
+      alert(e);
       webcam_on = false;
     }
     console.log(webcam_on);
