@@ -144,7 +144,7 @@ const camParams2 = {
       alert("s1", stream)
       // let stream2 = await navigator.mediaDevices.getUserMedia( camParams2 );
       // alert("s2")
-
+      alert(stream)
       if (!stream) {
         webcam_off = false;
         throw 'no stream'
