@@ -7,7 +7,12 @@ import {} from "./tfjs.js"
 
 class WelcomeMessage extends SvgPlus {
     constructor(){
-        super("span")
+        super("div")
+        this.styles = {
+            "display": "flex",
+            "flex-direction": "column",
+            "align-items": "center"
+        }
         this.loadContent()
     }
 
