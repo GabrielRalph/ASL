@@ -20,7 +20,12 @@
     sign-app {
         display: flex;
         flex-direction: column;
-        position: relative;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
         --charge: 0;
     }
 
@@ -30,10 +35,16 @@
         justify-content: center;
     }
 
+    .main-display {
+        height:  100%;
+        width: 100%;
+    }
+
     sign-app:not([state]) .welcome-message {
         display: flex;
         align-items: center;
         justify-content: center;
+        height: 100%;
     }
 
     sign-app .centered {
@@ -90,7 +101,7 @@
         width: 2em;
         height: calc(var(--charge) * 80%);
         background-color: rgb(141, 221, 91);
-        outline: 2px solid white;
+        border: 2px solid white;
         border-radius: 5em;
         margin: 0.5em;
     }
@@ -102,7 +113,7 @@
         font-size: 2em;
         transform: translateX(-50%);
         background-color: #fffa;
-        outline: 2px solid rgb(141, 221, 91);
+        border: 2px solid rgb(141, 221, 91);
         border-radius: 5em;
         margin: 0.5em;
     }
@@ -114,7 +125,6 @@
         flex-direction: column;
         justify-content: center;
         align-items: stretch;
-
     }
 
 </style>

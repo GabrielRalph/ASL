@@ -154,7 +154,6 @@ const camParams2 = {
           resolve(true)
           Video.removeEventListener("loadeddata", onload);
         };
-        alert("wating load")
         Video.addEventListener("loadeddata", onload);
         Video.srcObject = stream;
         webcam_on = true;

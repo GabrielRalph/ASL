@@ -122,7 +122,7 @@ class SignApp extends SvgPlus {
         this.setAttribute("state", "loading")
 
         let started = await startWebcam()
-        alert(started);
+        // alert(started);
        if (started) {
             this.setAttribute("state", "started")
             let stream = getStream();
