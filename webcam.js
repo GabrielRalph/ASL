@@ -28,6 +28,13 @@ const camParams2 = {
   Video.style.setProperty("z-index", "-100");
   Video.style.setProperty("pointer-events", "none");
   // Video.style.setProperty("z-index", "-100");
+  Video.toggleAttribute("autoplay", true);
+  Video.toggleAttribute("playsinline", true);
+  Video.toggleAttribute("muted", true);
+  Video.muted = true;
+  Video.onunmute = () => {
+    console.log('xx');
+  }
 
   document.body.prepend(Video);
   let Stream = null;
@@ -38,13 +45,6 @@ const camParams2 = {
   let capturing = false;
   let processListeners = [];
   
-  Video.toggleAttribute("autoplay", true);
-  Video.toggleAttribute("playsinline", true);
-  Video.toggleAttribute("muted", true);
-  Video.muted = true;
-  Video.onunmute = () => {
-    console.log('xx');
-  }
   
   // ~~~~~~~~ HELPFULL METHODS ~~~~~~~~
   async function parallel() {
@@ -142,8 +142,8 @@ const camParams2 = {
       // Get the users video media stream
       let stream = await navigator.mediaDevices.getUserMedia( params );
       alert("s1")
-      let stream2 = await navigator.mediaDevices.getUserMedia( camParams2 );
-      alert("s2")
+      // let stream2 = await navigator.mediaDevices.getUserMedia( camParams2 );
+      // alert("s2")
       if (!stream) {
         webcam_off = false;
         throw 'no stream'
@@ -156,8 +156,8 @@ const camParams2 = {
           webcam_on = true;
           alert("loaded")
           Video.removeEventListener("loadeddata", onload);
-          resolve(true)
         };
+        resolve(true)
         alert("wating load")
         Video.addEventListener("loadeddata", onload);
         Video.srcObject = stream;
