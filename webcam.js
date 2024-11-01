@@ -141,22 +141,26 @@ const camParams2 = {
       setUserMediaVariable();
       // Get the users video media stream
       let stream = await navigator.mediaDevices.getUserMedia( params );
+      alert("s1")
       let stream2 = await navigator.mediaDevices.getUserMedia( camParams2 );
+      alert("s2")
       if (!stream) {
         webcam_off = false;
         throw 'no stream'
       }
       Stream = stream;
       Stream2 = stream2;
-      Video.srcObject = stream;
       console.log("here");
       return new Promise((resolve, reject) => {
         let onload = () => {
           webcam_on = true;
+          alert("loaded")
           Video.removeEventListener("loadeddata", onload);
           resolve(true)
         };
+        alert("wating load")
         Video.addEventListener("loadeddata", onload);
+        Video.srcObject = stream;
       });
     } catch (e) {
       console.log(e);
