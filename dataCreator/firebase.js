@@ -8,7 +8,8 @@ const CONFIG =  {
     projectId: "database1-e8735",
     storageBucket: "database1-e8735.firebasestorage.app",
     messagingSenderId: "312188726261",
-    appId: "1:312188726261:web:01f7587d8951a7ee5c0ebc"
+    appId: "1:312188726261:web:01f7587d8951a7ee5c0ebc",
+    databaseURL: "https://database1-e8735-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 console.log("here");
 const App = initializeApp(CONFIG);
