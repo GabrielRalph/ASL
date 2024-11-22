@@ -1,5 +1,5 @@
 import { SvgPlus, Vector } from "https://www.svg.plus/4.js";
-import { addProcessListener, getStream, startWebcam, stopProcessing } from "../webcam.js";
+import { addProcessListener, getStream, startWebcam, stopProcessing, setVideoSRC} from "../webcam.js";
 import { startProcessing } from "../webcam.js";
 import {} from "../landmarker.js"
 import { saveData } from "./firebase.js";
@@ -96,8 +96,10 @@ const MY_ICONS ={
     pause: `<rect x="3.82" y="0" width="5.43" height="23.83" rx="2.72" ry="2.72"/>
     <rect x="14.17" y="0" width="5.43" height="23.83" rx="2.72" ry="2.72"/>`,
     close: `<path d="M15.55,11.91l4.58-4.58c1.06-1.06,1.06-2.78,0-3.84-1.06-1.06-2.78-1.06-3.84,0l-4.58,4.58L7.13,3.49c-1.06-1.06-2.78-1.06-3.84,0s-1.06,2.78,0,3.84l4.58,4.58-4.58,4.58c-1.06,1.06-1.06,2.78,0,3.84,1.06,1.06,2.78,1.06,3.84,0l4.58-4.58,4.58,4.58c1.06,1.06,2.78,1.06,3.84,0,1.06-1.06,1.06-2.78,0-3.84l-4.58-4.58Z"/>`,
-    save: `<path d="M15.7.2H3.74C1.67.2,0,1.88,0,3.94v15.95c0,2.06,1.67,3.74,3.74,3.74h15.95c2.06,0,3.74-1.67,3.74-3.74V7.92C23.42,3.66,19.97.2,15.7.2ZM11.71,18.67c-1.81,0-3.27-1.47-3.27-3.27s1.47-3.27,3.27-3.27,3.27,1.47,3.27,3.27-1.47,3.27-3.27,3.27ZM12.41,7.79h-4.56c-1.69,0-3.07-1.37-3.07-3.07,0-.88.71-1.59,1.59-1.59h7.52c.88,0,1.59.71,1.59,1.59,0,1.69-1.37,3.07-3.07,3.07Z"/>`
+    save: `<path d="M15.7.2H3.74C1.67.2,0,1.88,0,3.94v15.95c0,2.06,1.67,3.74,3.74,3.74h15.95c2.06,0,3.74-1.67,3.74-3.74V7.92C23.42,3.66,19.97.2,15.7.2ZM11.71,18.67c-1.81,0-3.27-1.47-3.27-3.27s1.47-3.27,3.27-3.27,3.27,1.47,3.27,3.27-1.47,3.27-3.27,3.27ZM12.41,7.79h-4.56c-1.69,0-3.07-1.37-3.07-3.07,0-.88.71-1.59,1.59-1.59h7.52c.88,0,1.59.71,1.59,1.59,0,1.69-1.37,3.07-3.07,3.07Z"/>`,
+    file: `<path d="M19.59,0H3.76C1.68,0,0,1.68,0,3.76v16.49c0,2.08,1.68,3.76,3.76,3.76h15.83c2.08,0,3.76-1.68,3.76-3.76V3.76c0-2.08-1.68-3.76-3.76-3.76ZM18.08,11.21c-.34.33-.78.5-1.23.5s-.92-.18-1.26-.53l-2.16-2.22v10.42c0,.97-.79,1.76-1.76,1.76s-1.76-.79-1.76-1.76v-10.42l-2.16,2.22c-.34.35-.8.53-1.26.53s-.88-.17-1.23-.5c-.7-.68-.71-1.79-.03-2.49l5.18-5.32s.01,0,.02-.01c0,0,0-.01.01-.02.08-.08.19-.12.28-.18.1-.06.18-.14.29-.18.1-.04.21-.05.32-.07.11-.02.22-.06.34-.06.11,0,.21.04.32.06.12.02.23.03.34.07.11.04.2.12.29.19.09.06.19.1.27.18,0,0,0,.01.01.02,0,0,.01,0,.02.01l5.18,5.32c.68.7.66,1.81-.03,2.49Z"/>`
 }
+
 
 class MyIcons extends SvgPlus {
     constructor(mode = "play") {
@@ -240,6 +242,7 @@ class ToolBar extends ToolBarBase {
     constructor(){
         super("div")
         this.class = "tool-bar"
+        this.addIcon(MyIcons, "file");
         this.addIcon(RecordIcon, "record");
         this.addIcon(MyIcons, "play");
 
@@ -338,6 +341,7 @@ class DataCreator extends SvgPlus {
             events: {
                 record: () => this.toggleRecording(),
                 play: () => this.enterPlayBackMode(),
+                file: () => this.setVideoSRC()
             }
         })
 
@@ -377,16 +381,34 @@ class DataCreator extends SvgPlus {
 
         this.hasShownHands = false;
         addProcessListener((results) => {
-          
+            let isSrc = results.video.srcMode;
+            let time = results.video.currentTime;
+            let duration = results.video.duration;
+            if (isSrc) {
+                if (!this.recording && time <= results.video.duration - 0.1) {
+                    this.recording = true;
+                    this.srcMode = true;
+                }
+
+                if (this.recording && time > results.video.duration - 0.1) {
+                    this.recording = false;
+                    this.srcMode = false;
+                    this.exitVideoSRC();
+                }
+                // this.video.currentTime = time;
+            }
+            
             this.svg.landmarkResults = results.result;
             
             let n = results.result.landmarks.length
-            if (n == 0) {
-                if (this.hasShownHands) {
-                    this.recording = false;
+            if (!isSrc) {
+                if (n == 0) {
+                    if (this.hasShownHands) {
+                        this.recording = false;
+                    }
+                } else {
+                    this.hasShownHands = true;
                 }
-            } else {
-                this.hasShownHands = true;
             }
             if (this.recording && n > 0) {
                 this.buffer.push({
@@ -397,6 +419,34 @@ class DataCreator extends SvgPlus {
                 })
             }
         })
+    }
+
+
+    setVideoSRC(){
+        if (this.recording) return;
+        let input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "video/*");
+
+        input.addEventListener("change", (event) => {
+            const videoFile = input.files[0]; // Get the selected file
+            if (videoFile) {
+                const src = URL.createObjectURL(videoFile); // Create a URL for the file
+                
+                this.video.srcObject = null;
+                this.video.props = {src: src}
+                setVideoSRC(src);
+            } else {
+                alert("No video file selected. Please try again.");
+            }
+        })
+         input.click();
+    }
+
+    exitVideoSRC(){
+        this.video.props = {src: null};
+        this.video.srcObject = getStream();
+        setVideoSRC(null);
     }
 
     async save(){
@@ -473,7 +523,7 @@ class DataCreator extends SvgPlus {
     }
 
     async toggleRecording(){
-        if (this._srt) return;
+        if (this._srt || this.srcMode) return;
         this._srt = true;
         if (this.recording) {
             this.recording = false;
@@ -504,6 +554,7 @@ class DataCreator extends SvgPlus {
     set recording(val){
         this.hasShownHands = false;
         
+        console.log("start");
         // update the has recording attribute if recording has stopped
         this.toggleAttribute("has-recording", !val && this.buffer.length > 0);
 

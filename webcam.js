@@ -20,23 +20,29 @@ const camParams2 = {
   
   let Canvas = document.createElement("canvas");
   let Ctx = Canvas.getContext("2d", {willReadFrequently: true});
-  let Video = document.createElement("video");
-  Video.style.setProperty("opacity", "0");
-  Video.style.setProperty("width", "640");
-  Video.style.setProperty("height", "480");
-  Video.style.setProperty("position", "absolute");
-  Video.style.setProperty("z-index", "-100");
-  Video.style.setProperty("pointer-events", "none");
-  // Video.style.setProperty("z-index", "-100");
-  Video.toggleAttribute("autoplay", true);
-  Video.toggleAttribute("playsinline", true);
-  Video.toggleAttribute("muted", true);
-  Video.muted = true;
-  Video.onunmute = () => {
-    console.log('xx');
+  function makeVideo(webcam){
+    let v = document.createElement("video");
+    v.style.setProperty("opacity", "0");
+    v.style.setProperty("width", webcam ? "640" : "100%");
+    v.style.setProperty("height", webcam ? "480" : null);
+    v.style.setProperty("position", "absolute");
+    v.style.setProperty("z-index", "-100");
+    v.style.setProperty("pointer-events", "none");
+    v.toggleAttribute("autoplay", true);
+    v.toggleAttribute("playsinline", true);
+    v.toggleAttribute("muted", true);
+    v.muted = true;
+    return v;
   }
 
+  const Video = makeVideo(true);
+  const srcVideo = makeVideo(false);
+
+  srcVideo.srcMode = true;
+
+
   document.body.prepend(Video);
+  document.body.prepend(srcVideo);
   let Stream = null;
   let Stream2 = null;
   let Process = null;
@@ -44,7 +50,7 @@ const camParams2 = {
   var stopCapture = false;
   let capturing = false;
   let processListeners = [];
-  
+  let srcMode = false;
   
   // ~~~~~~~~ HELPFULL METHODS ~~~~~~~~
   async function parallel() {
@@ -67,7 +73,11 @@ const camParams2 = {
     let t0 = window.performance.now();
     captureFrame();
     let t1 = window.performance.now();
-    let input = {video: Video, canvas: Canvas, context: Ctx};
+    let v = Video;
+    if (srcMode) {
+      v = srcVideo;
+    }
+    let input = {video: v, canvas: Canvas, context: Ctx};
     input.width = Canvas.width;
     input.height = Canvas.height;
     if (Process instanceof Function){
@@ -92,12 +102,14 @@ const camParams2 = {
   }
   
   function captureFrame(){
-    Canvas.width = Video.videoWidth;
-    Canvas.height = Video.videoHeight;
+    let v = Video
+    if (srcMode) v = srcVideo;
+    Canvas.width = v.videoWidth;
+    Canvas.height = v.videoHeight;
   
     let {width, height} = Canvas;
   
-    Ctx.drawImage(Video, 0, 0, Canvas.width, Canvas.height);
+    Ctx.drawImage(v, 0, 0, Canvas.width, Canvas.height);
   }
   
   function setUserMediaVariable(){
@@ -125,6 +137,21 @@ const camParams2 = {
   }
   
   // ~~~~~~~~ PUBLIC METHODS ~~~~~~~~
+
+  export function setVideoSRC(src){
+    // stopWebcam()
+    if (src == null) {
+      srcMode = false;
+    } else {
+      srcVideo.setAttribute("src", src)
+      srcVideo.addEventListener("loadeddata", () => {
+        srcMode = true;
+        srcVideo.play();
+      })
+    }
+  }
+
+
   export function setProcess(algorithm){
     if (algorithm instanceof Function) {
       Process = algorithm;
@@ -166,12 +193,12 @@ const camParams2 = {
   }
   
   export function stopWebcam(){
+    stopProcessing();
     try {
       for (let track of Stream.getTracks()) {
         track.stop();
       }
     } catch(e) {}
-    stopProcessing();
     webcam_on = false;
   }
   
